@@ -112,8 +112,10 @@ export default function NotesFormatter({ adminPassword }) {
   const blocks = useMemo(() => parseNotes(rawText), [rawText])
   const buildData = () => ({ topic, authorName, institution, noteDate, rawText, blocks })
 
+  const baseTextRef = useRef('')  // text in box at moment voice started/question inserted
+
   const handleVoiceResult = useCallback((final, interim) => {
-    setRawText(final.trimEnd())
+    setRawText(baseTextRef.current + final.trimEnd())
     setInterimText(interim)
   }, [])
 
@@ -121,6 +123,8 @@ export default function NotesFormatter({ adminPassword }) {
 
   const startLang = (lang) => {
     setActiveLang(lang)
+    // snapshot current text as base before starting voice
+    baseTextRef.current = rawText ? rawText.trimEnd() + ' ' : ''
     start(handleVoiceResult, lang === 'ur' ? 'ur-PK' : 'en-US')
   }
 
@@ -130,25 +134,22 @@ export default function NotesFormatter({ adminPassword }) {
     setInterimText('')
   }
 
-  // Insert question number at end of current text
+  // Insert question number — also resets base so next voice appends after it
   const insertQuestion = () => {
     const newQ = qCount + 1
     setQCount(newQ)
-    setRawText(prev => {
-      const base = prev.trimEnd()
-      return base ? base + '\n' + newQ + '. ' : newQ + '. '
-    })
-    // Reset voice accumulation so next speech starts fresh after the number
+    const newBase = rawText.trimEnd() + '\n' + newQ + '. '
+    setRawText(newBase)
+    baseTextRef.current = newBase  // voice will append after the number
     textareaRef.current?.focus()
   }
 
-  // Insert answer label
+  // Insert answer label — also resets base
   const insertAnswer = () => {
-    const label = activeLang === 'ur' ? 'جواب: ' : 'Answer: '
-    setRawText(prev => {
-      const base = prev.trimEnd()
-      return base ? base + '\n' + label : label
-    })
+    const label = activeLang === 'ur' ? '\nجواب: ' : '\nAnswer: '
+    const newBase = rawText.trimEnd() + label
+    setRawText(newBase)
+    baseTextRef.current = newBase  // voice will append after the label
     textareaRef.current?.focus()
   }
 
