@@ -87,7 +87,11 @@ function useSpeechInput(onResult) {
     setListening(false)
   }, [])
 
-  return { listening, start, stop }
+  const resetAcc = useCallback(() => {
+    finalAccRef.current = ''
+  }, [])
+
+  return { listening, start, stop, resetAcc }
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -119,7 +123,7 @@ export default function NotesFormatter({ adminPassword }) {
     setInterimText(interim)
   }, [])
 
-  const { listening, start, stop } = useSpeechInput(handleVoiceResult)
+  const { listening, start, stop, resetAcc } = useSpeechInput(handleVoiceResult)
 
   const startLang = (lang) => {
     setActiveLang(lang)
@@ -134,22 +138,22 @@ export default function NotesFormatter({ adminPassword }) {
     setInterimText('')
   }
 
-  // Insert question number — also resets base so next voice appends after it
   const insertQuestion = () => {
     const newQ = qCount + 1
     setQCount(newQ)
     const newBase = rawText.trimEnd() + '\n' + newQ + '. '
     setRawText(newBase)
-    baseTextRef.current = newBase  // voice will append after the number
+    baseTextRef.current = newBase
+    resetAcc()
     textareaRef.current?.focus()
   }
 
-  // Insert answer label — also resets base
   const insertAnswer = () => {
     const label = activeLang === 'ur' ? '\nجواب: ' : '\nAnswer: '
     const newBase = rawText.trimEnd() + label
     setRawText(newBase)
-    baseTextRef.current = newBase  // voice will append after the label
+    baseTextRef.current = newBase
+    resetAcc()
     textareaRef.current?.focus()
   }
 
