@@ -6,7 +6,7 @@
 export default function NotesPreviewModal({ data, blocks, onClose }) {
   const urduFont = {
     fontFamily: '"Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", serif',
-    fontSize: 15,
+    fontSize: 12,
     lineHeight: 2.2,
   }
   const urduJustified = { ...urduFont, textAlign: 'justify' }

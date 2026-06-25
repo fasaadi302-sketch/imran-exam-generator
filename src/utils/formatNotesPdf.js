@@ -32,7 +32,7 @@ export async function downloadNotesPdf(data, filename) {
       font-family: 'Jameel Noori Nastaleeq';
       src: local('Jameel Noori Nastaleeq'), local('JameelNooriNastaleeq');
     }
-    .pn-ur { font-family: "Jameel Noori Nastaleeq","Noto Nastaliq Urdu",serif; font-size:15px; line-height:2.2; }
+    .pn-ur { font-family: "Jameel Noori Nastaleeq","Noto Nastaliq Urdu",serif; font-size:12px; line-height:2.2; }
     .pn-en { font-family: "Times New Roman",Times,serif; }
     .pn-institution { font-size:16px; font-weight:700; text-align:center; color:#0B2545; margin-bottom:3px; font-family:"Times New Roman",serif; }
     .pn-rule-thick  { border:none; border-top:2px solid #0B2545; margin:3px 0; }
