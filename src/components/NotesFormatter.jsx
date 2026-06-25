@@ -69,16 +69,17 @@ function useSpeechInput(onResult) {
   const start = useCallback((onResultCb, lang) => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SR) { alert('Voice input needs Chrome or Edge browser.'); return }
-    if (activeRef.current) {
-      activeRef.current = false
-      recogRef.current?.stop()
-      setListening(false)
-    }
-    langRef.current     = lang
-    activeRef.current   = true
-    finalAccRef.current = ''
-    setListening(true)
-    startRecog(onResultCb, lang)
+    // Stop any existing instance first
+    activeRef.current = false
+    try { recogRef.current?.stop() } catch(_) {}
+    // Small delay to let old instance fully stop before starting new
+    setTimeout(() => {
+      langRef.current     = lang
+      activeRef.current   = true
+      finalAccRef.current = ''
+      setListening(true)
+      startRecog(onResultCb, lang)
+    }, 300)
   }, [startRecog])
 
   const stop = useCallback(() => {
@@ -127,8 +128,8 @@ export default function NotesFormatter({ adminPassword }) {
 
   const startLang = (lang) => {
     setActiveLang(lang)
-    // snapshot current text as base before starting voice
     baseTextRef.current = rawText ? rawText.trimEnd() + ' ' : ''
+    resetAcc()
     start(handleVoiceResult, lang === 'ur' ? 'ur-PK' : 'en-US')
   }
 
